@@ -1,7 +1,18 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
+const cache = require("./cache.service");
 
 const auditWebsite = async (url) => {
+    // Check cache first
+    const cachedData = cache.get(url);
+
+    if (cachedData) {
+        return {
+            ...cachedData,
+            cached: true
+        };
+    }
+
     const startTime = Date.now();
 
     const response = await axios.get(url, {
@@ -14,7 +25,7 @@ const auditWebsite = async (url) => {
 
     const $ = cheerio.load(response.data);
 
-    return {
+    const result = {
         url,
         statusCode: response.status,
         responseTime,
@@ -23,6 +34,14 @@ const auditWebsite = async (url) => {
         contentLength: response.headers["content-length"] || "Unknown",
         server: response.headers["server"] || "Unknown",
         timestamp: new Date().toISOString()
+    };
+
+    // Save in cache
+    cache.set(url, result);
+
+    return {
+        ...result,
+        cached: false
     };
 };
 

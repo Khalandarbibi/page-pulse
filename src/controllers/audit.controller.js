@@ -6,10 +6,11 @@ exports.auditUrl = async (req, res, next) => {
 
         const result = await auditWebsite(url);
 
-        res.status(200).json({
-            success: true,
-            data: result
-        });
+    res.status(200).json({
+        success: true,
+        requestId: req.requestId,
+        data: result
+    });
 
     } catch (error) {
     next(error);
