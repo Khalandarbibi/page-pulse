@@ -29,7 +29,9 @@ app.use("/api/v1", auditRoutes);
 app.get("/", (req, res) => {
     res.json({
         success: true,
-        message: "Page Pulse API is running 🚀"
+        message: "Page Pulse API is running 🚀",
+        project: "Built for Digital Heroes Training Task",
+        website: "https://digitalheroesco.com"
     });
 });
 

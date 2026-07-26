@@ -1,6 +1,8 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const cache = require("./cache.service");
+const pLimit = require("p-limit");
+const limit = pLimit(10);
 
 const auditWebsite = async (url) => {
     // Check cache first
@@ -15,11 +17,13 @@ const auditWebsite = async (url) => {
 
     const startTime = Date.now();
 
-    const response = await axios.get(url, {
-        timeout: 10000,
+    const response = await limit(() =>
+    axios.get(url, {
+        timeout: Number(process.env.REQUEST_TIMEOUT) || 10000,
         maxRedirects: 5,
         validateStatus: () => true
-    });
+    })
+);
 
     const responseTime = Date.now() - startTime;
 
